@@ -14,15 +14,23 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchProducts() {
-      const res = await fetch("/api/products");
-      const data = await res.json();
-      setProducts(data);
-      setLoading(false);
-    }
-
     fetchProducts();
   }, []);
+
+  async function fetchProducts() {
+    const res = await fetch("/api/products");
+    const data = await res.json();
+    setProducts(data);
+    setLoading(false);
+  }
+
+  async function deleteProduct(id: string) {
+    await fetch(`/api/products/${id}`, {
+      method: "DELETE",
+    });
+
+    setProducts(products.filter((p) => p._id !== id));
+  }
 
   if (loading) {
     return <p style={{ padding: "30px" }}>Loading...</p>;
@@ -38,6 +46,7 @@ export default function DashboardPage() {
             <th style={th}>Product Name</th>
             <th style={th}>Price (₹)</th>
             <th style={th}>Stock</th>
+            <th style={th}>Action</th>
           </tr>
         </thead>
 
@@ -59,6 +68,14 @@ export default function DashboardPage() {
                 }}
               >
                 {p.stock}
+              </td>
+              <td style={td}>
+                <button
+                  onClick={() => deleteProduct(p._id)}
+                  style={deleteBtn}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
@@ -103,5 +120,11 @@ const td = {
   borderBottom: "1px solid #e5e7eb",
 };
 
-
-
+const deleteBtn = {
+  backgroundColor: "#ef4444",
+  color: "#ffffff",
+  padding: "6px 12px",
+  borderRadius: "6px",
+  border: "none",
+  cursor: "pointer",
+};
