@@ -13,6 +13,10 @@ export default function DashboardPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [stock, setStock] = useState("");
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -24,12 +28,31 @@ export default function DashboardPage() {
     setLoading(false);
   }
 
+  async function addProduct(e: React.FormEvent) {
+    e.preventDefault();
+
+    await fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name,
+        price: Number(price),
+        stock: Number(stock),
+      }),
+    });
+
+    setName("");
+    setPrice("");
+    setStock("");
+    fetchProducts();
+  }
+
   async function deleteProduct(id: string) {
     await fetch(`/api/products/${id}`, {
       method: "DELETE",
     });
 
-    setProducts(products.filter((p) => p._id !== id));
+    setProducts((prev) => prev.filter((p) => p._id !== id));
   }
 
   if (loading) {
@@ -40,6 +63,40 @@ export default function DashboardPage() {
     <main style={container}>
       <h1 style={title}>Admin Dashboard</h1>
 
+      {/* Add Product Form */}
+      <form onSubmit={addProduct} style={form}>
+        <input
+          placeholder="Product name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          style={input}
+        />
+
+        <input
+          placeholder="Price"
+          type="number"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          required
+          style={input}
+        />
+
+        <input
+          placeholder="Stock"
+          type="number"
+          value={stock}
+          onChange={(e) => setStock(e.target.value)}
+          required
+          style={input}
+        />
+
+        <button type="submit" style={addBtn}>
+          Add Product
+        </button>
+      </form>
+
+      {/* Products Table */}
       <table style={table}>
         <thead>
           <tr>
@@ -88,15 +145,42 @@ export default function DashboardPage() {
 /* ---------- Styles ---------- */
 
 const container = {
+
   padding: "40px",
   backgroundColor: "#f1f5f9",
   minHeight: "100vh",
+  color: "#000000",   // 👈 force black text
 };
+
+ 
 
 const title = {
   fontSize: "28px",
   marginBottom: "20px",
   color: "#1e293b",
+};
+
+const form = {
+  display: "flex",
+  gap: "10px",
+  marginBottom: "25px",
+};
+
+const input = {
+  padding: "10px",
+  borderRadius: "6px",
+  border: "1px solid #cbd5e1",
+  color: "#000000",        // 👈 text black
+  backgroundColor: "#fff" // 👈 input background white
+};
+
+const addBtn = {
+  backgroundColor: "#22c55e",
+  color: "white",
+  padding: "10px 16px",
+  borderRadius: "6px",
+  border: "none",
+  cursor: "pointer",
 };
 
 const table = {
@@ -118,7 +202,9 @@ const th = {
 const td = {
   padding: "12px",
   borderBottom: "1px solid #e5e7eb",
+  color: "#000000",
 };
+
 
 const deleteBtn = {
   backgroundColor: "#ef4444",
@@ -128,3 +214,4 @@ const deleteBtn = {
   border: "none",
   cursor: "pointer",
 };
+
