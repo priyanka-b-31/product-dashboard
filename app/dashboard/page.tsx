@@ -25,36 +25,41 @@ export default function DashboardPage() {
   }, []);
 
   if (loading) {
-    return <p style={{ padding: "20px" }}>Loading...</p>;
+    return <p style={{ padding: "30px" }}>Loading...</p>;
   }
 
   return (
-    <main style={{ padding: "40px" }}>
-      <h1 style={{ fontSize: "26px", marginBottom: "20px" }}>
-        Admin Dashboard
-      </h1>
+    <main style={container}>
+      <h1 style={title}>Admin Dashboard</h1>
 
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          background: "#fff",
-        }}
-      >
+      <table style={table}>
         <thead>
-          <tr style={{ background: "#f3f4f6" }}>
-            <th style={th}>Name</th>
-            <th style={th}>Price</th>
+          <tr>
+            <th style={th}>Product Name</th>
+            <th style={th}>Price (₹)</th>
             <th style={th}>Stock</th>
           </tr>
         </thead>
 
         <tbody>
-          {products.map((p) => (
-            <tr key={p._id}>
+          {products.map((p, index) => (
+            <tr
+              key={p._id}
+              style={{
+                backgroundColor: index % 2 === 0 ? "#f9fafb" : "#ffffff",
+              }}
+            >
               <td style={td}>{p.name}</td>
               <td style={td}>₹{p.price}</td>
-              <td style={td}>{p.stock}</td>
+              <td
+                style={{
+                  ...td,
+                  color: p.stock > 0 ? "green" : "red",
+                  fontWeight: 600,
+                }}
+              >
+                {p.stock}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -63,13 +68,40 @@ export default function DashboardPage() {
   );
 }
 
+/* ---------- Styles ---------- */
+
+const container = {
+  padding: "40px",
+  backgroundColor: "#f1f5f9",
+  minHeight: "100vh",
+};
+
+const title = {
+  fontSize: "28px",
+  marginBottom: "20px",
+  color: "#1e293b",
+};
+
+const table = {
+  width: "100%",
+  borderCollapse: "collapse" as const,
+  backgroundColor: "#ffffff",
+  borderRadius: "8px",
+  overflow: "hidden",
+  boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+};
+
 const th = {
-  padding: "12px",
-  border: "1px solid #ddd",
+  padding: "14px",
+  backgroundColor: "#2563eb",
+  color: "#ffffff",
   textAlign: "left" as const,
 };
 
 const td = {
-  padding: "10px",
-  border: "1px solid #ddd",
+  padding: "12px",
+  borderBottom: "1px solid #e5e7eb",
 };
+
+
+
